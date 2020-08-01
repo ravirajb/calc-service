@@ -5,7 +5,7 @@ import com.atnt.training.calcservice.model.CaclResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CalcService {
+public class CalcService implements ICalcService {
     public CaclResponse addNumbers(final String number1,
                                    final String number2) {
         try {
