@@ -4,9 +4,12 @@ import com.atnt.training.calcservice.exception.CalcException;
 import com.atnt.training.calcservice.model.CaclError;
 import com.atnt.training.calcservice.model.CaclResponse;
 import com.atnt.training.calcservice.model.CalcPayload;
+import com.atnt.training.calcservice.model.User;
+import com.atnt.training.calcservice.service.CalcService;
 import com.atnt.training.calcservice.service.CustomCalcService;
 import com.atnt.training.calcservice.service.ICalcService;
 import com.atnt.training.calcservice.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @ConfigurationProperties
 @EnableConfigurationProperties
 public class CalcController {
+
+    @Autowired
+    private CalcService calcService;
 
     @GetMapping(value = "${calc-service.api.version}" + "/add-numbers")
     public ResponseEntity<?> addNumbers(@RequestParam(name = "number1") final String number1,
@@ -34,6 +40,23 @@ public class CalcController {
                     responseHeaders,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("${calc-service.api.version}" + "/user/")
+    public ResponseEntity<?> saveUser(@RequestBody final User user) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        calcService.saveUser(user.getName(), user.getLastName());
+        return new ResponseEntity<>(user.getName() + " saved successfully",
+                responseHeaders,
+                HttpStatus.OK);
+    }
+
+    @GetMapping("${calc-service.api.version}" + "/user/{userId}")
+    public ResponseEntity<?> saveUser(@PathVariable final int userId) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        return new ResponseEntity<>(calcService.getUser(userId),
+                responseHeaders,
+                HttpStatus.OK);
     }
 
     @GetMapping(value = "${calc-service.api.version}" + "/list/{method}")
